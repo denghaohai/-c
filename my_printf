@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdarg.h>
+#include <inttypes.h>
+
+int my_printf(const char *a, ...) {
+    int n = 0;
+    va_list arg;
+    va_start(arg, a);
+    for (int i = 0, n = 0; a[i]; i++, n++) {
+        switch (a[i]) {
+            case '%' : {
+                i++;
+                switch(a[i]) {
+                    case 'd' : {
+                        int tmp = va_arg(arg, int), num = 0;
+                        while (tmp) {
+                            num = num * 10 + tmp % 10;//记录数值
+                            tmp /= 10;
+                        }
+                        while (num) {
+                            putchar(num % 10 + '0');//输出数值
+                            num /= 10;
+                        } 
+                    } break;
+                    default : 
+                        fprintf(stderr, "error : unknow %%%c\n", a[i]); //stderr为标准错误输出
+                        exit(1);
+                }
+            } break;
+            default:
+                putchar(a[i]);
+        }
+    }
+    return n;
+}
+
+int main() {
+    int n = 1;
+    my_printf("hello world\n");
+    my_printf("%d", n);
+    return 0;
+}
