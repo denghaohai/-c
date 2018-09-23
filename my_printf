@@ -3,6 +3,26 @@
 #include <stdarg.h>
 #include <inttypes.h>
 
+int print_int(int x, int flag) {
+    if (x == 0) {
+        flag && putchar('0');
+        return !!(flag);
+    }
+    int temp = x, ret = 0;
+    x = 0;
+    if (temp < 0) temp = -temp, printf("-");
+    while (temp) {
+        x = x * 10 + temp % 10;
+        temp /= 10;
+    }
+    while (x) {
+        putchar(x % 10 + '0');
+        x /= 10;
+        ret++;
+    }
+    return ret;
+}
+
 int my_printf(const char *a, ...) {
     int n = 0;
     va_list arg;
@@ -13,15 +33,14 @@ int my_printf(const char *a, ...) {
                 i++;
                 switch(a[i]) {
                     case 'd' : {
-                        int tmp = va_arg(arg, int), num = 0;
-                        while (tmp) {
-                            num = num * 10 + tmp % 10;//记录数值
-                            tmp /= 10;
+                         int temp = va_arg(arg, int);
+                        int p1 = temp / 10, p2 = temp % 10;
+                        if (temp < 0) {
+                            p1 = -p1, p2 = -p2;
+                            putchar('-'); n++;
                         }
-                        while (num) {
-                            putchar(num % 10 + '0');//输出数值
-                            num /= 10;
-                        } 
+                        n += print_int(p1, 0);
+                        n += print_int(p2, 1);
                     } break;
                     default : 
                         fprintf(stderr, "error : unknow %%%c\n", a[i]); //stderr为标准错误输出
@@ -30,6 +49,7 @@ int my_printf(const char *a, ...) {
             } break;
             default:
                 putchar(a[i]);
+                n++;
         }
     }
     return n;
